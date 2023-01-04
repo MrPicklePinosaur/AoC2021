@@ -1,15 +1,15 @@
 module Day3 where
 
 import Data.Char (digitToInt)
+import Debug.Trace (trace)
 
 -- APPROACH: sum all bits, if sum of all bits is greater than half of the total number of lines, then the most occuring bit in that bit position is a 1, otherwise it's zero
 
 solve :: IO ()
 solve = do
-  contents <- readFile "input/day3_test.txt"
+  contents <- readFile "input/day3.txt"
   let input = map parseLine $ lines contents
-  -- print $ solveA input
-  -- print $ lifeSupp input (>=) 0
+  print $ solveA input
   print $ solveB input
 
 parseLine = map digitToInt
@@ -27,12 +27,13 @@ solveB input = lifeSupp input (>=) 0 * lifeSupp input (<) 0
 lifeSupp :: [[Int]] -> (Int -> Int -> Bool) -> Int -> Int
 lifeSupp [] _ _ = 0
 lifeSupp [x] _ _ = toDec x
-lifeSupp input cmp i = lifeSupp (filter (\a -> a!!i==freq) input) cmp nextInd
+lifeSupp input cmp i = lifeSupp filtered cmp nextInd
   where
+    filtered = filter (\a -> a!!i==freq) input
     nextInd = i+1 `mod` length (head input)
     freq = fromEnum $ cmp colsum halflen
     colsum = foldr (\x acc -> acc + (x!!i)) 0 input
-    halflen = length input `div` 2
+    halflen = (length input `div` 2) + (length input `rem` 2)
 
 toDec :: [Int] -> Int
 toDec = foldl (\acc x -> acc * 2 + x) 0
