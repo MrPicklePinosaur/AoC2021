@@ -6,18 +6,33 @@ import Data.Char (digitToInt)
 
 solve :: IO ()
 solve = do
-  contents <- readFile "input/day3.txt"
+  contents <- readFile "input/day3_test.txt"
   let input = map parseLine $ lines contents
-  print $ solveA input
+  -- print $ solveA input
+  -- print $ lifeSupp input (>=) 0
+  print $ solveB input
 
 parseLine = map digitToInt
 
 solveA :: [[Int]] -> Int
-solveA input = toDec bin * toDec (map not bin)
+solveA input = toDec bin * toDec (map (1-) bin)
   where 
-    bin = map (>halflen) sums
+    bin = map (fromEnum . (>halflen)) sums
     sums = foldr1 (zipWith (+)) input
     halflen = length input `div` 2
 
-toDec :: [Bool] -> Int
-toDec = foldl (\acc x -> acc * 2 + fromEnum x) 0
+solveB :: [[Int]] -> Int
+solveB input = lifeSupp input (>=) 0 * lifeSupp input (<) 0
+ 
+lifeSupp :: [[Int]] -> (Int -> Int -> Bool) -> Int -> Int
+lifeSupp [] _ _ = 0
+lifeSupp [x] _ _ = toDec x
+lifeSupp input cmp i = lifeSupp (filter (\a -> a!!i==freq) input) cmp nextInd
+  where
+    nextInd = i+1 `mod` length (head input)
+    freq = fromEnum $ cmp colsum halflen
+    colsum = foldr (\x acc -> acc + (x!!i)) 0 input
+    halflen = length input `div` 2
+
+toDec :: [Int] -> Int
+toDec = foldl (\acc x -> acc * 2 + x) 0
