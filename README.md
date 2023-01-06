@@ -22,6 +22,10 @@ Probably the biggest issue I ran into for this day was converting between the na
 
 Getting a bit into the hang of functional programming as I started making use of more higher level functions. Also messed around with `Debug.Trace` to debug part b.
 
+## Day 4
+
+Pretty straight forward. Although I feel like my solution wasn't exactly the cleanest, it may be worth coming back later and trying to clean up this solution.
+
 # TODO
 - [ ] cli that let's you print output of each day, also has flags for part a/b etc
 - [ ] consider literate programming for questions?

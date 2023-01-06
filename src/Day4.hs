@@ -21,6 +21,7 @@ solve = do
   let parsedBoards = (map.map) (parseRow . T.pack) rawBoards
   let boards = map createBoard parsedBoards
   print $ solveA moves boards
+  print $ solveB moves boards
 
 solveA :: [Int] -> [Board] -> Int
 solveA [] _ = 0
@@ -30,6 +31,17 @@ solveA (x:xs) b = case winnerBoard of
   where
     winnerBoard = L.find isWinner stepped
     stepped = map (stepBoard x) b
+
+solveB :: [Int] -> [Board] -> Int
+solveB [] _ = 0
+solveB (x:xs) b
+  | L.null next && not (L.null winners) = calculateScore x $ head winners
+  | otherwise = solveB xs next
+  where
+    winners = filter isWinner stepped
+    next = filter (not . isWinner) stepped
+    stepped = map (stepBoard x) b
+
 
 calculateScore :: Int -> Board -> Int
 calculateScore i b = i * (sum . map sum $ rows b)
