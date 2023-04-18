@@ -20,28 +20,21 @@ solve :: IO ()
 solve = do
   contents <- readFile "input/day5.txt"
   let fileLines = lines contents
-  let parsed = parseInput ([], []) fileLines
-  -- let test = solveA ([Line { start = (0,0), end = (5, 0) }, Line { start = (0, 7), end = (2, 7) }], [ Line { start = (0, 0), end = (0, 5) } ])
+  let parsed = map parseLine fileLines
+  -- print parsed
+  let test  = [Line { start = (0,0), end = (5, 0) }, Line { start = (0, 7), end = (2, 7) }, Line { start = (0, 0), end = (0, 5) } ]
   print $ solveA parsed
+  -- print test
+  -- print $ solveA parsed
 
 -- solveA :: ([Line], [Line]) -> Int
-solveA (hls, vls) = length $ filter (\(_, count) -> count > 1) counts
+solveA lines = length $ filter (\(_, count) -> count > 1) counts
     where
-        counts = occurences . concat $ hpoints ++ vpoints -- how many times each point is covered
-        hpoints = map (\line -> [(x, y1 line) | x <- [x1 line..x2 line]]) hls -- all points that horizontal lines cover
-        vpoints = map (\line -> [(x1 line, y) | y <- [y1 line..y2 line]]) vls -- all points that vertical lines cover
+        counts = occurences . concat $ points lines
+        points = map (\line -> [(x, y) | x <- [x1 line..x2 line], y <- [y1 line..y2 line]])
 
 occurences :: Ord a => [a] -> [(a, Int)]
 occurences xs = toList (fromListWith (+) [(x,1) | x <- xs])
-
-parseInput :: ([Line], [Line]) -> [String] -> ([Line], [Line])
-parseInput acc [] = acc
-parseInput (h, v) (x:xs)
-  | isHorizontal line = parseInput (line : h, v) xs
-  | isVertical line = parseInput (h, line : v) xs
-  | otherwise = parseInput (h, v) xs
-  where
-    line = parseLine x
 
 parseLine :: String -> Line
 parseLine t
@@ -61,10 +54,6 @@ isHorizontal l = y1 l == y2 l
 
 isVertical :: Line -> Bool
 isVertical l = x1 l == x2 l
-
--- assumes that first line is horizontal and second is vertical
-isIntersectHV :: Line -> Line -> Bool
-isIntersectHV hl vl = x1 hl <= x1 vl && (x1 vl <= x2 hl) && (y1 vl <= y1 hl) && (y1 hl <= y2 vl) 
 
 x1 :: Line -> Int
 x1 = fst . start
