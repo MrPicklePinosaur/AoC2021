@@ -20,21 +20,42 @@ solve :: IO ()
 solve = do
   contents <- readFile "input/day5.txt"
   let fileLines = lines contents
-  let parsed = map parseLine fileLines
-  -- print parsed
-  let test  = [Line { start = (0,0), end = (5, 0) }, Line { start = (0, 7), end = (2, 7) }, Line { start = (0, 0), end = (0, 5) } ]
-  print $ solveA parsed
-  -- print test
+  let parsed = parseInput ([], [], []) fileLines
+  print $ dpoints [Line { start = (9,7), end = (7,9) }]
+  print $ dpoints [Line { start = (1,1), end = (3,3) }]
   -- print $ solveA parsed
+  print $ solveB parsed
 
 -- solveA :: ([Line], [Line]) -> Int
-solveA lines = length $ filter (\(_, count) -> count > 1) counts
+solveA (hls, vls, dls) = length $ filter (\(_, count) -> count > 1) counts
     where
-        counts = occurences . concat $ points lines
-        points = map (\line -> [(x, y) | x <- [x1 line..x2 line], y <- [y1 line..y2 line]])
+        counts = occurences . concat $ hpoints ++ vpoints -- how many times each point is covered
+        hpoints = map (\line -> [(x, y1 line) | x <- [x1 line..x2 line]]) hls -- all points that horizontal lines cover
+        vpoints = map (\line -> [(x1 line, y) | y <- [y1 line..y2 line]]) vls -- all points that vertical lines cover
+
+solveB (hls, vls, dls) = length $ filter (\(_, count) -> count > 1) counts
+    where
+        counts = occurences . concat $ hpoints ++ vpoints ++ dpoints dls-- how many times each point is covered
+        hpoints = map (\line -> [(x, y1 line) | x <- [x1 line..x2 line]]) hls -- all points that horizontal lines cover
+        vpoints = map (\line -> [(x1 line, y) | y <- [y1 line..y2 line]]) vls -- all points that vertical lines cover
+
+dpoints = map (\line -> zip (smartRange (x1 line) (x2 line)) (smartRange (y1 line) (y2 line)))
+
+smartRange e1 e2
+    | e1 <= e2 = [e1..e2]
+    | otherwise = reverse [e2..e1]
 
 occurences :: Ord a => [a] -> [(a, Int)]
 occurences xs = toList (fromListWith (+) [(x,1) | x <- xs])
+
+parseInput :: ([Line], [Line], [Line]) -> [String] -> ([Line], [Line], [Line])
+parseInput acc [] = acc
+parseInput (h, v, d) (x:xs)
+  | isHorizontal line = parseInput (line : h, v, d) xs
+  | isVertical line = parseInput (h, line : v, d) xs
+  | otherwise = parseInput (h, v, line : d) xs
+  where
+    line = parseLine x
 
 parseLine :: String -> Line
 parseLine t
