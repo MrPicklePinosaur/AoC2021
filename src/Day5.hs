@@ -3,12 +3,12 @@
 module Day5 where
 
 import qualified Data.Text as T
+import Data.Map (fromListWith, toList)
 
 -- solution idea: points intersect when they are not parallel, compare points that are horizontal and vertical mutually
 -- TODO solution not efficient O(n^2)
 -- ISSUE does not take into account overlapping lines :(
 
-  
 type Point = (Int, Int)
   
 data Line = Line
@@ -21,14 +21,19 @@ solve = do
   contents <- readFile "input/day5.txt"
   let fileLines = lines contents
   let parsed = parseInput ([], []) fileLines
-  print parsed
-  -- print $ solveA parsed
+  -- let test = solveA ([Line { start = (0,0), end = (5, 0) }, Line { start = (0, 7), end = (2, 7) }], [ Line { start = (0, 0), end = (0, 5) } ])
+  print $ solveA parsed
 
-solveA :: ([Line], [Line]) -> Int
-solveA (hls, vls) = sum $ map countIntersect hls
-  where
-    countIntersect hl = length $ filter (isIntersectHV hl) vls
-  
+-- solveA :: ([Line], [Line]) -> Int
+solveA (hls, vls) = length $ filter (\(_, count) -> count > 1) counts
+    where
+        counts = occurences . concat $ hpoints ++ vpoints -- how many times each point is covered
+        hpoints = map (\line -> [(x, y1 line) | x <- [x1 line..x2 line]]) hls -- all points that horizontal lines cover
+        vpoints = map (\line -> [(x1 line, y) | y <- [y1 line..y2 line]]) vls -- all points that vertical lines cover
+
+occurences :: Ord a => [a] -> [(a, Int)]
+occurences xs = toList (fromListWith (+) [(x,1) | x <- xs])
+
 parseInput :: ([Line], [Line]) -> [String] -> ([Line], [Line])
 parseInput acc [] = acc
 parseInput (h, v) (x:xs)
