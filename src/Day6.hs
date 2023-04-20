@@ -19,9 +19,11 @@ sim :: Int -> [Int] -> [Int]
 sim cycles = foldr (.) id (replicate cycles simStep)
 
 simStep :: [Int] -> [Int]
-simStep = foldr simFish []
-
-simFish :: Int -> [Int] -> [Int]
-simFish age acc
-  | age > 0 = acc++[age-1]
-  | otherwise = acc++[6,8]
+simStep fish = agedFish ++ newFish
+    where
+        newFish = replicate newFishCount 8
+        newFishCount = length $ filter (==0) fish
+        agedFish = map simFish fish
+        simFish age
+          | age > 0 = age-1
+          | otherwise = 6
