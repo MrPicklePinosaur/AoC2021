@@ -48,6 +48,14 @@ Once again, I feel like I could have made the code cleaner. However, my LSP
 already helps quite a bit when dealing with uncurrying suggestions. For example
 I learned about the `uncurry` function.
 
+## Day 6
+
+Not much to comment on, this day was pretty straight forward. It involved me
+iterating through the most naive solution (simulating all fish in an array and
+foldr to construct new array every time), to slightly better one (mapping
+through array and adding baby fish seperately), to a final solution (buckets of
+fish of each age).
+
 # TODO
 - [ ] cli that let's you print output of each day, also has flags for part a/b etc
 - [ ] consider literate programming for questions?
