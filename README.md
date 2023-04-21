@@ -56,6 +56,12 @@ foldr to construct new array every time), to slightly better one (mapping
 through array and adding baby fish seperately), to a final solution (buckets of
 fish of each age).
 
+## Day 7
+
+Easy Peasy
+
+
+
 # TODO
 - [ ] cli that let's you print output of each day, also has flags for part a/b etc
 - [ ] consider literate programming for questions?
