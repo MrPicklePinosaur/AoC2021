@@ -6,7 +6,8 @@ import qualified Day3 (solve)
 import qualified Day4 (solve) 
 import qualified Day5 (solve) 
 import qualified Day6 (solve) 
+import qualified Day7 (solve) 
 
 main :: IO ()
 main = do
-  Day6.solve
+  Day7.solve
