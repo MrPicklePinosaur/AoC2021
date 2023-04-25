@@ -60,7 +60,11 @@ fish of each age).
 
 Easy Peasy
 
+## Day 8
 
+Part B required a bit of a decision tree like structure, which I implemented in
+a really ugly way in haskell (see the `decodeLine` function). Maybe next step
+is to explore a more funtional / idiomatic method of solving this
 
 # TODO
 - [ ] cli that let's you print output of each day, also has flags for part a/b etc
